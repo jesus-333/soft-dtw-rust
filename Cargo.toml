@@ -1,0 +1,8 @@
+[package]
+name = "soft-dtw-rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ndarray = "0.15.0"
+num = "0.4.2"
