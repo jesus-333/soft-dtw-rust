@@ -1,10 +1,9 @@
 use ndarray::prelude::*;
-use num::complex::ComplexFloat;
-use numpy::ndarray::{ArrayViewD};
+use numpy::ndarray::ArrayView1;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-pub fn compute_sdtw(x : ArrayViewD<'_, f64>, y : ArrayViewD<'_, f64>, gamma : f64) -> f64 {
+pub fn compute_sdtw(x : ArrayView1<'_, f64>, y : ArrayView1<'_, f64>, gamma : f64) -> f64 {
     let x_len = x.len();
     let y_len = y.len();
 
@@ -13,7 +12,7 @@ pub fn compute_sdtw(x : ArrayViewD<'_, f64>, y : ArrayViewD<'_, f64>, gamma : f6
     return distance_matrix[[x_len -1, y_len -1]];
 }
 
-pub fn compute_distance_matrix(x : ArrayViewD<'_, f64>, y : ArrayViewD<'_, f64>, gamma : f64) -> Array2<f64> {
+pub fn compute_distance_matrix(x : ArrayView1<'_, f64>, y : ArrayView1<'_, f64>, gamma : f64) -> Array2<f64> {
     
     let gamma_for_computation = if gamma <= 0. {
         println!("gamma must be non negative. Current value is {}. Set the value to 1", gamma);
@@ -22,7 +21,7 @@ pub fn compute_distance_matrix(x : ArrayViewD<'_, f64>, y : ArrayViewD<'_, f64>,
         gamma
     };
 
-    print_type_of(&x);
+    // print_type_of(&x);
 
     // Create distance matrix. Even if I do this initial check for now I conside x and y of the
     // same dimension.
@@ -48,6 +47,7 @@ pub fn compute_distance_matrix(x : ArrayViewD<'_, f64>, y : ArrayViewD<'_, f64>,
     // section of the matrix)
     let mut shift = 0;
     
+    // println!("n_diagonals = {}, n_diagonals / 2 = {}", n_diagonals, n_diagonals / 2);
     // Compute soft-dtw for each element of the matrix
     for n_1 in 1..n_diagonals{ // Iterate through the diagonals
         // Compute the number of element in the diagonals
@@ -109,6 +109,17 @@ pub fn compute_distance_matrix(x : ArrayViewD<'_, f64>, y : ArrayViewD<'_, f64>,
             let soft_min_values = compute_soft_min_optimized(upper_value, upper_left_value, left_value, gamma);
             distance_matrix[[idx_1, idx_2]] = l_norm_value + soft_min_values;
 
+            // if l_norm_value.is_infinite() || soft_min_values.is_infinite() {
+            //     println!("{:?}", distance_matrix);
+            //     println!("l_norm_value      = {}", l_norm_value);
+            //     println!("soft_min_values   = {}", soft_min_values);
+            //     println!("upper_value       = {}", upper_value);
+            //     println!("upper_left_value  = {}", upper_left_value);
+            //     println!("left_value        = {}", left_value);
+            //     println!("idx_1 = {}, idx_2 = {}", idx_1, idx_2);
+            //
+            //     return distance_matrix
+            // }
         }
     }
 
@@ -129,7 +140,25 @@ fn l_norm(x : f64, y : f64, n : usize) -> f64 {
 /// soft_min = -gamma * ln(exp(-x/gamma) + exp(-y/gamma) + exp(-z/gamma))
 /// where gamme is a non negative hyperparameter
 fn compute_soft_min_optimized(upper_value : f64, upper_left_value : f64, left_value : f64, gamma : f64) -> f64{
-    return  -gamma * ((-upper_value/gamma).exp() + (-upper_left_value/gamma).exp() + (-left_value/gamma).exp()).ln()
+    let e_uv = (-upper_value/gamma).exp();
+    let e_ulv = (-upper_left_value/gamma).exp();
+    let e_lv = (-left_value/gamma).exp();
+
+    // println!("e_uv  = {}", e_uv);
+    // println!("e_ulv = {}", e_ulv);
+    // println!("e_lv  = {}\n", e_lv);
+    //
+    // println!("uv  = {}", upper_value);
+    // println!("ulv = {}", upper_left_value);
+    // println!("lv  = {}", left_value);
+    // println!("- - - - -- - -");
+
+    if e_uv == 0. && e_ulv == 0. && e_lv == 0. {
+        return min_of_three_values(upper_value, upper_left_value, left_value)
+    } else {
+        return  -gamma * (e_uv + e_ulv + e_lv).ln()
+    }
+
 }
 
 fn compute_soft_min_general(values_array : &[f64], gamma : f64) -> f64 {
@@ -139,6 +168,16 @@ fn compute_soft_min_general(values_array : &[f64], gamma : f64) -> f64 {
     }
 
     return -gamma * soft_min.ln()
+}
+
+fn min_of_three_values(v_1 : f64, v_2 : f64, v_3 : f64) -> f64{
+    if v_1 <= v_2 {
+        if v_1 <=v_3 { return v_1 }
+        else { return v_3}
+    } else {
+        if v_2 <=v_3 { return v_2 }
+        else { return v_3}
+    }
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
