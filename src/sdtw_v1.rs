@@ -1,3 +1,5 @@
+use core::panic;
+
 use ndarray::prelude::*;
 use numpy::ndarray::ArrayView1;
 
@@ -6,6 +8,10 @@ use numpy::ndarray::ArrayView1;
 pub fn compute_sdtw(x : ArrayView1<'_, f64>, y : ArrayView1<'_, f64>, gamma : f64) -> f64 {
     let x_len = x.len();
     let y_len = y.len();
+
+    if x_len != y_len {
+        panic!("x and y must have the same length. x length = {}, y length = {}", x_len, y_len)
+    }
 
     let distance_matrix = compute_distance_matrix(x, y, gamma);
 
