@@ -156,6 +156,9 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
     if: "startsWith(github.ref, 'refs/tags/')"
     needs: [linux, musllinux, windows, macos, sdist]
     steps:
@@ -163,19 +166,19 @@ jobs:
       - name: Publish to PyPI
         uses: PyO3/maturin-action@v1
         # env:
-        #  MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        #   MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         with:
           command: upload
           args: --non-interactive --skip-existing wheels-*/*
 
-  pypi-publish:
-    name: upload release to PyPI
-    runs-on: ubuntu-latest
-    # Specifying a GitHub environment is optional, but strongly encouraged
-    permissions:
-      # IMPORTANT: this permission is mandatory for trusted publishing
-      id-token: write
-    steps:
-      # retrieve your distributions here
-      - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+  # pypi-publish:
+  #   name: upload release to PyPI
+  #   runs-on: ubuntu-latest
+  #   # Specifying a GitHub environment is optional, but strongly encouraged
+  #   permissions:
+  #     # IMPORTANT: this permission is mandatory for trusted publishing
+  #     id-token: write
+  #   steps:
+  #     # retrieve your distributions here
+  #     - name: Publish package distributions to PyPI
+  #       uses: pypa/gh-action-pypi-publish@release/v1
