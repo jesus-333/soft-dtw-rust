@@ -112,7 +112,7 @@ pub fn compute_distance_matrix(x : ArrayView1<'_, f64>, y : ArrayView1<'_, f64>,
             
             // Compute the dtw value for the current cell
             let l_norm_value = l_norm(x[idx_1], y[idx_2], 2);
-            let soft_min_values = compute_soft_min_optimized(upper_value, upper_left_value, left_value, gamma);
+            let soft_min_values = compute_soft_min_optimized(upper_value, upper_left_value, left_value, gamma_for_computation);
             distance_matrix[[idx_1, idx_2]] = l_norm_value + soft_min_values;
 
             // if l_norm_value.is_infinite() || soft_min_values.is_infinite() {
@@ -139,7 +139,7 @@ fn l_norm(x : f64, y : f64, n : usize) -> f64 {
     return f64::powf(num::pow(x - y, n), 1 as f64 / n as f64)
 }
 
-/// Optimized version of the soft min for the soft-dtw computation
+/// "Optimized" version of the soft min for the soft-dtw computation.
 /// Due to the structure of the distance matrix to compute a new value you only need to know
 /// the values above, on the left and on the left diagonal above the current value.
 /// Calling this 3 value x, y and z, and the new value soft_min then this function compute

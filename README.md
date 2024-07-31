@@ -3,6 +3,7 @@
 
 Note that this is primarily an exercise to learn how to code in Rust and integrate Rust scripts in Python. I'm not pretending that this is 100% functional or correct. 
 This implementation is not created to be used as a loss function. It is designed only to compute the soft-dtw distance between two signals. Also for now works only if the signals to compare have the same length. In future I could modify the algorithm to work with signals of different lengths. 
+The distance between samples of the two signals is computed through the L-2 norm.
 
 ## How to use
 

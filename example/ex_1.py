@@ -48,5 +48,3 @@ for i in range(len(size_list)):
     print("Test with {} samples".format(size))
     print("\tTime = {:.8f}".format(end - start))
     print("\tOUTPUT : {}".format(output))
-
-
