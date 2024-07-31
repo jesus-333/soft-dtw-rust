@@ -10,6 +10,7 @@ This implementation is not created to be used as a loss function. It is designed
 2) Install the package in your python environment running the command ```maturin develop --release```.
 3) Import the module ```soft_dtw_rust``` and call one of the two methods `compute_sdtw_1d` or `compute_sdtw_2d`. For both methods, you can pass the hyperparameter `gamma`. If you not pass it by default will be set to 1.
 
+### Example with code
 ```python
 import soft_dtw_rust
 x = np.random.rand(size)
@@ -17,6 +18,9 @@ y = np.random.rand(size)
 output = soft_dtw_rust.compute_sdtw_1d(x, y, gamma)
 ```
 
+A small example with synthetic data can be found inside the example folder.
+
+### Extra noted on python methods
 Note that `compute_sdtw_1d` is used to compute the difference between two 1d signals and return a single float 64 value.
 
 Instead `compute_sdtw_2d` is used to compute the difference between two matrices of signals. Also in this case the output is a single float 64 value. 
