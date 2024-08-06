@@ -5,11 +5,18 @@ Note that this is primarily an exercise to learn how to code in Rust and integra
 This implementation is not created to be used as a loss function. It is designed only to compute the soft-dtw distance between two signals. Also for now works only if the signals to compare have the same length. In future I could modify the algorithm to work with signals of different lengths. 
 The distance between samples of the two signals is computed through the L-2 norm.
 
-## How to use
+## Installation
+### Method 1
+Use the command ```pip install soft-dtw-rust```
+
+### Method 2
 
 1) Download the repository and install maturin in your python environment (it is available both in conda and pip).
 2) Install the package in your python environment running the command ```maturin develop --release```.
 3) Import the module ```soft_dtw_rust``` and call one of the two methods `compute_sdtw_1d` or `compute_sdtw_2d`. For both methods, you can pass the hyperparameter `gamma`. If you not pass it by default will be set to 1.
+
+## Use the library
+Import the package `soft_dtw_rust` and call the function `compute_sdtw_1d` or `compute_sdtw_2d`. The differences between 1d and 2d version is described below.
 
 ### Example with code
 ```python
@@ -21,7 +28,7 @@ output = soft_dtw_rust.compute_sdtw_1d(x, y, gamma)
 
 A small example with synthetic data can be found inside the example folder.
 
-### Extra noted on python methods
+### Extra notes on 1d and 2d version
 Note that `compute_sdtw_1d` is used to compute the difference between two 1d signals and return a single float 64 value.
 
 Instead `compute_sdtw_2d` is used to compute the difference between two matrices of signals. Also in this case the output is a single float 64 value. 
